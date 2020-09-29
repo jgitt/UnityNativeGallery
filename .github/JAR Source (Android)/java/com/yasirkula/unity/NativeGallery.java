@@ -93,7 +93,15 @@ public class NativeGallery
 		// Android 10 restricts our access to the raw filesystem, use MediaStore to save media in that case
 		if( android.os.Build.VERSION.SDK_INT >= 29 )
 		{
-			values.put( MediaStore.MediaColumns.RELATIVE_PATH, "DCIM/" + directoryName );
+			String savePath;
+			if( mediaType == MEDIA_TYPE_IMAGE )
+				savePath = "Pictures/" + directoryName;
+			else if( mediaType == MEDIA_TYPE_VIDEO )
+				savePath = "Movies/" + directoryName;
+			else
+				savePath = "DCIM/" + directoryName;
+
+			values.put( MediaStore.MediaColumns.RELATIVE_PATH, savePath );
 			values.put( MediaStore.MediaColumns.DATE_TAKEN, System.currentTimeMillis() );
 			values.put( MediaStore.MediaColumns.IS_PENDING, true );
 
@@ -122,7 +130,15 @@ public class NativeGallery
 		}
 		else
 		{
-			File directory = new File( Environment.getExternalStoragePublicDirectory( Environment.DIRECTORY_DCIM ), directoryName );
+			String savePathEnv;
+			if( mediaType == MEDIA_TYPE_IMAGE )
+				savePathEnv = Environment.DIRECTORY_PICTURES;
+			else if( mediaType == MEDIA_TYPE_VIDEO )
+				savePathEnv = Environment.DIRECTORY_MOVIES;
+			else
+				savePathEnv = Environment.DIRECTORY_DCIM;
+
+			File directory = new File( Environment.getExternalStoragePublicDirectory( savePathEnv ), directoryName );
 			directory.mkdirs();
 
 			File file;
